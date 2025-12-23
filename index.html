@@ -2,204 +2,251 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Sistema de Atendimento</title>
+  <title>Sistema de Atendimento | Fretado</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     :root {
-      --bg: #f7f7f8;
+      --bg: #f0f2f5;
       --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --blue: #2563eb;
-      --green: #16a34a;
-      --purple: #7c3aed;
-      --red: #dc2626;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --blue: #3b82f6;
+      --green: #10b981;
+      --purple: #8b5cf6;
+      --red: #ef4444;
+      --border: #e2e8f0;
     }
-
-    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background: var(--bg);
-      color: var(--text);
-      padding: 32px 16px;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
     }
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-    }
-
-    .card {
+    .main-card {
       background: var(--card);
+      width: 100%;
+      max-width: 700px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      padding: 32px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.06);
-      margin-bottom: 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
     }
 
     h1 {
       margin: 0;
-      font-size: 24px;
-      font-weight: 600;
+      font-size: 28px;
+      letter-spacing: -0.5px;
     }
 
     .subtitle {
-      color: var(--muted);
+      color: var(--text-muted);
       font-size: 14px;
-      margin-top: 4px;
+      margin-top: 8px;
     }
 
-    /* ===== BOTÕES DE TIPO ===== */
-    .types {
+    /* Grid de Opções "Fechadas" */
+    .options-grid {
       display: grid;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .type-btn {
-      padding: 14px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: #fff;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all .2s;
-    }
-
-    .type-btn.active {
-      border-width: 2px;
-    }
-
-    .blue.active { border-color: var(--blue); background: #eff6ff; }
-    .green.active { border-color: var(--green); background: #ecfdf5; }
-    .purple.active { border-color: var(--purple); background: #f5f3ff; }
-    .red.active { border-color: var(--red); background: #fef2f2; }
-
-    /* ===== FORM ===== */
-    form {
-      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 16px;
-      margin-top: 16px;
+      margin-bottom: 24px;
     }
 
-    label {
-      font-size: 14px;
-      font-weight: 500;
+    .option-card {
+      padding: 20px;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+      background: #fff;
     }
+
+    .option-card i {
+      width: 24px;
+      height: 24px;
+      color: var(--text-muted);
+    }
+
+    .option-card span {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* Estilos Ativos por Cor */
+    .option-card.active.blue { border-color: var(--blue); background: #eff6ff; }
+    .option-card.active.blue i { color: var(--blue); }
+
+    .option-card.active.green { border-color: var(--green); background: #ecfdf5; }
+    .option-card.active.green i { color: var(--green); }
+
+    .option-card.active.purple { border-color: var(--purple); background: #f5f3ff; }
+    .option-card.active.purple i { color: var(--purple); }
+
+    .option-card.active.red { border-color: var(--red); background: #fef2f2; }
+    .option-card.active.red i { color: var(--red); }
+
+    /* Formulários Ocultos */
+    .form-container {
+      display: none; /* Começa fechado */
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .full-width { grid-column: span 2; }
 
     input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
+      padding: 12px 16px;
+      border-radius: 10px;
       border: 1px solid var(--border);
       font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
     }
 
-    button {
-      margin-top: 12px;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
+    input:focus { border-color: var(--blue); }
+
+    button.save-btn {
+      width: 100%;
+      padding: 14px;
       background: var(--blue);
       color: white;
+      border: none;
+      border-radius: 12px;
       font-weight: 600;
       cursor: pointer;
-    }
-
-    button:hover {
-      opacity: .9;
+      font-size: 16px;
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
     .hidden { display: none; }
   </style>
 </head>
-
 <body>
-  <div class="container">
 
-    <!-- HEADER -->
-    <div class="card">
+  <div class="main-card">
+    <header>
       <h1>Sistema de Atendimento</h1>
-      <div class="subtitle">Transporte Fretado • Registro de Atendimentos</div>
+      <div class="subtitle">Transporte Fretado • Registro Rápido</div>
+    </header>
 
-      <div class="types">
-        <div class="type-btn blue active" onclick="showForm('cartao', this)">Troca de Cartão</div>
-        <div class="type-btn green" onclick="showForm('linha', this)">Mudança de Linha</div>
-        <div class="type-btn purple" onclick="showForm('endereco', this)">Mudança de Endereço</div>
-        <div class="type-btn red" onclick="showForm('reclamacao', this)">Reclamações</div>
+    <div class="options-grid">
+      <div class="option-card blue" onclick="toggleForm('cartao', this)">
+        <i data-lucide="credit-card"></i>
+        <span>Troca de Cartão</span>
+      </div>
+      <div class="option-card green" onclick="toggleForm('linha', this)">
+        <i data-lucide="map-pin"></i>
+        <span>Mudança de Linha</span>
+      </div>
+      <div class="option-card purple" onclick="toggleForm('endereco', this)">
+        <i data-lucide="home"></i>
+        <span>Endereço</span>
+      </div>
+      <div class="option-card red" onclick="toggleForm('reclamacao', this)">
+        <i data-lucide="alert-circle"></i>
+        <span>Reclamação</span>
       </div>
     </div>
 
-    <!-- FORM TROCA CARTÃO -->
-    <div class="card form cartao">
-      <h2>Troca de Cartão</h2>
-      <form>
-        <input placeholder="Work Day" />
-        <input type="date" />
-        <input placeholder="Número do Cartão Novo" />
-        <input placeholder="RFID Novo" />
-        <input placeholder="Cartão Anterior" />
-        <input placeholder="RFID Anterior" />
-        <select>
-          <option>Motivo da troca</option>
-        </select>
-        <button>Salvar Registro</button>
+    <div id="form-area" class="form-container">
+      <h2 id="form-title" style="font-size: 18px; margin-bottom: 20px;">Detalhes do Registro</h2>
+      
+      <form id="active-form">
+        <div id="form-fields" class="form-group"></div>
+        <button type="submit" class="save-btn">Salvar Registro</button>
       </form>
     </div>
-
-    <!-- FORM MUDANÇA LINHA -->
-    <div class="card form linha hidden">
-      <h2>Mudança de Linha</h2>
-      <form>
-        <input placeholder="Work Day" />
-        <input type="date" />
-        <input placeholder="Linha Atual" />
-        <input placeholder="Linha Nova" />
-        <select>
-          <option>Motivo da mudança</option>
-        </select>
-        <button>Salvar Registro</button>
-      </form>
-    </div>
-
-    <!-- FORM ENDEREÇO -->
-    <div class="card form endereco hidden">
-      <h2>Mudança de Endereço</h2>
-      <form>
-        <input placeholder="Work Day" />
-        <input type="date" />
-        <input placeholder="Endereço Anterior" />
-        <input placeholder="Endereço Novo" />
-        <textarea placeholder="Observações"></textarea>
-        <button>Salvar Registro</button>
-      </form>
-    </div>
-
-    <!-- FORM RECLAMAÇÃO -->
-    <div class="card form reclamacao hidden">
-      <h2>Reclamações</h2>
-      <form>
-        <textarea placeholder="Descreva a reclamação"></textarea>
-        <button>Salvar Registro</button>
-      </form>
-    </div>
-
   </div>
 
   <script>
-    function showForm(type, el) {
-      document.querySelectorAll('.form').forEach(f => f.classList.add('hidden'));
-      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-      document.querySelector('.' + type).classList.remove('hidden');
+    // Inicializa ícones
+    lucide.createIcons();
+
+    const formsData = {
+      cartao: {
+        title: "Troca de Cartão",
+        fields: `
+          <input placeholder="Work Day" class="full-width" />
+          <input type="date" />
+          <input placeholder="Motivo da Troca" />
+          <input placeholder="Nº Cartão Novo" />
+          <input placeholder="RFID Novo" />
+          <input placeholder="Nº Cartão Anterior" />
+          <input placeholder="RFID Anterior" />
+        `
+      },
+      linha: {
+        title: "Mudança de Linha",
+        fields: `
+          <input placeholder="Work Day" class="full-width" />
+          <input placeholder="Linha Atual" />
+          <input placeholder="Linha Nova" />
+          <select class="full-width"><option>Selecione o Motivo</option></select>
+        `
+      },
+      endereco: {
+        title: "Mudança de Endereço",
+        fields: `
+          <input placeholder="Work Day" class="full-width" />
+          <input placeholder="Novo Endereço" class="full-width" />
+          <textarea placeholder="Observações" class="full-width"></textarea>
+        `
+      },
+      reclamacao: {
+        title: "Registrar Reclamação",
+        fields: `
+          <input placeholder="Work Day" class="full-width" />
+          <textarea placeholder="Descreva o ocorrido" class="full-width" rows="4"></textarea>
+        `
+      }
+    };
+
+    function toggleForm(type, el) {
+      const container = document.getElementById('form-area');
+      const fields = document.getElementById('form-fields');
+      const title = document.getElementById('form-title');
+      
+      // Remove 'active' de todos os cards
+      document.querySelectorAll('.option-card').forEach(card => card.classList.remove('active'));
+      
+      // Adiciona 'active' no clicado
       el.classList.add('active');
+
+      // Preenche e mostra o formulário
+      title.innerText = formsData[type].title;
+      fields.innerHTML = formsData[type].fields;
+      container.style.display = 'block';
     }
   </script>
 </body>
 </html>
-
-
