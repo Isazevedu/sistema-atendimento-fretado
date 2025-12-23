@@ -8,231 +8,170 @@
 
   <style>
     :root {
-      --bg: #f3f4f6;
+      --bg: #f8fafc;
       --card-bg: #ffffff;
-      --border: #e5e7eb;
-      --text: #1f2937;
-      --text-muted: #6b7280;
+      --border: #e2e8f0;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --primary-blue: #2563eb;
+      --success-green: #22c55e;
+      --danger-red: #ef4444;
       
-      /* Cores dos Temas */
-      --blue: #3b82f6;
-      --green: #10b981;
-      --purple: #8b5cf6;
-      --red: #ef4444;
+      --color-cartao: #2563eb;
+      --color-linha: #16a34a;
+      --color-endereco: #7c3aed;
+      --color-reclamacao: #dc2626;
     }
 
-    * { box-sizing: border-box; transition: all 0.2s ease; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
 
-    body {
-      margin: 0;
-      font-family: 'Inter', -apple-system, sans-serif;
-      background-color: var(--bg);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 20px;
-    }
+    .card { background: var(--card-bg); width: 100%; max-width: 850px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); padding: 24px; }
+    .header-title { color: var(--primary-blue); font-size: 24px; font-weight: 700; margin: 0; }
+    .header-subtitle { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
 
-    .container {
-      background: var(--card-bg);
-      width: 100%;
-      max-width: 800px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      padding: 40px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-
-    h1 { margin: 0; font-size: 28px; color: var(--text); }
-    .subtitle { color: var(--text-muted); font-size: 14px; margin-top: 8px; }
-
-    /* GRID DE BOTÕES (TABS) */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-
-    .menu-item {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      background: white;
-    }
-
-    .menu-item i { width: 20px; height: 20px; color: var(--text-muted); }
-    .menu-item span { font-size: 13px; font-weight: 500; color: var(--text-muted); }
-
-    /* Estados Ativos */
-    .menu-item.active.blue { border: 2px solid var(--blue); background: #eff6ff; }
-    .menu-item.active.blue i, .menu-item.active.blue span { color: var(--blue); }
-
-    .menu-item.active.green { border: 2px solid var(--green); background: #ecfdf5; }
-    .menu-item.active.green i, .menu-item.active.green span { color: var(--green); }
-
-    .menu-item.active.purple { border: 2px solid var(--purple); background: #f5f3ff; }
-    .menu-item.active.purple i, .menu-item.active.purple span { color: var(--purple); }
-
-    .menu-item.active.red { border: 2px solid var(--red); background: #fef2f2; }
-    .menu-item.active.red i, .menu-item.active.red span { color: var(--red); }
+    /* MENU VERTICAL */
+    .menu-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+    .menu-button { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; gap: 8px; }
+    .menu-button span { font-size: 14px; font-weight: 500; color: var(--text-main); }
+    .menu-button.active.blue { border: 2px solid var(--color-cartao); }
+    .menu-button.active.green { border: 2px solid var(--color-linha); }
+    .menu-button.active.purple { border: 2px solid var(--color-endereco); }
+    .menu-button.active.red { border: 2px solid var(--color-reclamacao); }
 
     /* FORMULÁRIO */
-    .form-section {
-      display: none; /* Inicia fechado */
-      border-top: 1px solid var(--border);
-      padding-top: 32px;
-      animation: slideDown 0.3s ease-out;
-    }
+    .form-section { display: none; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 24px; }
+    .form-header { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+    .input-group { margin-bottom: 15px; }
+    .input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .required { color: var(--danger-red); margin-left: 2px; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+    textarea { resize: vertical; min-height: 80px; }
+    .helper-text { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .save-btn { width: 100%; background-color: var(--primary-blue); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
 
-    .input-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .input-container {
-      position: relative;
-      margin-bottom: 16px;
-    }
-
-    .input-container i {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      color: #9ca3af;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 12px 12px 12px 40px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 14px;
-      color: var(--text);
-      outline: none;
-    }
-
-    input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
-
-    .full-width { grid-column: span 2; }
-
-    button.save-btn {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(to bottom, #4f46e5, #3b82f6);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 20px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    }
-
-    button.save-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    /* REGISTROS */
+    .footer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .report-btn { background-color: var(--success-green); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; display: none; align-items: center; gap: 6px; }
+    .record-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-top: 12px; position: relative; animation: slideIn 0.3s ease; text-align: left; }
+    .record-header { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 8px; }
+    .record-date { color: var(--text-muted); font-size: 12px; font-weight: normal; margin-left: auto; margin-right: 35px; }
+    .record-body { font-size: 13px; line-height: 1.6; color: var(--text-main); }
+    .delete-btn { position: absolute; right: 15px; top: 15px; color: var(--danger-red); cursor: pointer; border: none; background: none; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <h1>Sistema de Atendimento</h1>
-      <div class="subtitle">Transporte Fretado • Registro de Atendimentos</div>
-    </header>
+  <div class="card">
+    <h1 class="header-title">Sistema de Atendimento</h1>
+    <div class="header-subtitle">Transporte Fretado - Registro de Atendimentos</div>
 
-    <div class="menu-grid">
-      <div class="menu-item blue" onclick="openForm('cartao', this)">
-        <i data-lucide="credit-card"></i>
-        <span>Troca de Cartão</span>
-      </div>
-      <div class="menu-item green" onclick="openForm('linha', this)">
-        <i data-lucide="repeat"></i>
-        <span>Mudança de Linha</span>
-      </div>
-      <div class="menu-item purple" onclick="openForm('endereco', this)">
-        <i data-lucide="map-pin"></i>
-        <span>Mudança de Endereço</span>
-      </div>
-      <div class="menu-item red" onclick="openForm('reclamacao', this)">
-        <i data-lucide="message-square"></i>
-        <span>Reclamações</span>
-      </div>
+    <div class="menu-list">
+      <div class="menu-button blue" onclick="showForm('cartao', this)"><i data-lucide="credit-card" style="color:var(--color-cartao)"></i><span>Troca de Cartão</span></div>
+      <div class="menu-button green" onclick="showForm('linha', this)"><i data-lucide="map-pin" style="color:var(--color-linha)"></i><span>Mudança de Linha</span></div>
+      <div class="menu-button purple" onclick="showForm('endereco', this)"><i data-lucide="map-pin" style="color:var(--color-endereco)"></i><span>Mudança de Endereço</span></div>
+      <div class="menu-button red" onclick="showForm('reclamacao', this)"><i data-lucide="alert-circle" style="color:var(--color-reclamacao)"></i><span>Reclamações</span></div>
     </div>
 
-    <div id="form-content" class="form-section">
-      <div id="fields-area" class="input-grid">
-        </div>
-      <button class="save-btn">Salvar Registro</button>
+    <div id="form-container" class="form-section">
+      <div class="form-header" id="dynamic-title"></div>
+      <div id="fields-area"></div>
+      <button class="save-btn" onclick="saveData()">Salvar Registro</button>
     </div>
   </div>
 
+  <div class="card">
+    <div class="footer-header">
+      <div style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:18px;"><i data-lucide="file-text"></i> Registros Salvos (<span id="count">0</span>)</div>
+      <button class="report-btn" id="btnReport"><i data-lucide="download"></i> Gerar Relatório</button>
+    </div>
+    <div id="records-list" style="text-align: center; color: var(--text-muted); font-size: 14px;">Nenhum registro salvo ainda.</div>
+  </div>
+
   <script>
-    // Inicializa os ícones do Lucide
+    let currentType = '';
+    let savedRecords = [];
     lucide.createIcons();
 
-    const forms = {
-      cartao: `
-        <div class="input-container"><i data-lucide="user"></i><input placeholder="Work Day"></div>
-        <div class="input-container"><i data-lucide="calendar"></i><input type="date"></div>
-        <div class="input-container"><i data-lucide="credit-card"></i><input placeholder="Número do Cartão Novo"></div>
-        <div class="input-container"><i data-lucide="rss"></i><input placeholder="RFID Novo"></div>
-        <div class="input-container"><i data-lucide="credit-card"></i><input placeholder="Cartão Anterior"></div>
-        <div class="input-container"><i data-lucide="rss"></i><input placeholder="RFID Anterior"></div>
-        <div class="input-container full-width">
-          <i data-lucide="help-circle"></i>
-          <select><option>Motivo da troca</option><option>Perda</option><option>Dano</option></select>
-        </div>
-      `,
-      linha: `
-        <div class="input-container full-width"><i data-lucide="user"></i><input placeholder="Work Day"></div>
-        <div class="input-container"><i data-lucide="arrow-right-circle"></i><input placeholder="Linha Atual"></div>
-        <div class="input-container"><i data-lucide="check-circle"></i><input placeholder="Linha Nova"></div>
-      `,
-      endereco: `
-        <div class="input-container full-width"><i data-lucide="home"></i><input placeholder="Novo Endereço completo"></div>
-        <div class="input-container full-width"><i data-lucide="edit-3"></i><textarea placeholder="Observações de referência"></textarea></div>
-      `,
-      reclamacao: `
-        <div class="input-container full-width"><i data-lucide="frown"></i><textarea placeholder="Descreva o ocorrido em detalhes..." rows="4"></textarea></div>
-      `
-    };
+    function showForm(type, el) {
+      currentType = type;
+      const container = document.getElementById('form-container');
+      const titleArea = document.getElementById('dynamic-title');
+      const fieldsArea = document.getElementById('fields-area');
+      document.querySelectorAll('.menu-button').forEach(btn => btn.classList.remove('active'));
+      el.classList.add('active');
 
-    function openForm(type, element) {
-      const section = document.getElementById('form-content');
-      const area = document.getElementById('fields-area');
-
-      // Reset botões
-      document.querySelectorAll('.menu-item').forEach(btn => btn.classList.remove('active'));
-      
-      // Ativa o atual
-      element.classList.add('active');
-
-      // Insere o HTML e mostra
-      area.innerHTML = forms[type];
-      section.style.display = 'block';
-
-      // Re-executa ícones para os novos campos
+      if(type === 'reclamacao') {
+        titleArea.innerHTML = `<i data-lucide="alert-circle" style="color:var(--color-reclamacao)"></i> Reclamação`;
+        fieldsArea.innerHTML = `
+          <div class="input-group"><label>Work Day<span class="required">*</span></label><input type="text" id="wd" placeholder="Ex: WD12345"></div>
+          <div class="input-group"><label>Data<span class="required">*</span></label><input type="date" id="date" value="2025-12-23"></div>
+          <div class="input-group"><label>Linha<span class="required">*</span></label><input type="text" id="linha_rec" placeholder="Ex: Linha A - Centro"></div>
+          <div class="input-group"><label>Endereço (opcional)</label><input type="text" id="end_rec" placeholder="Ponto de embarque/desembarque"></div>
+          <div class="input-group"><label>Tipo de Reclamação<span class="required">*</span></label>
+            <select id="tipo_rec">
+              <option value="">Selecione...</option>
+              <option>Atraso</option>
+              <option>Conduta do motorista</option>
+              <option>Veículo em más condições</option>
+              <option>Não parou no ponto</option>
+              <option>Outros</option>
+            </select>
+          </div>
+          <div class="input-group"><label>Descrição Detalhada<span class="required">*</span></label>
+            <textarea id="desc_rec" placeholder="Descreva detalhadamente a situação..."></textarea>
+          </div>`;
+      } else if(type === 'endereco') {
+        titleArea.innerHTML = `<i data-lucide="map-pin" style="color:var(--color-endereco)"></i> Mudança de Endereço`;
+        fieldsArea.innerHTML = `<div class="input-group"><label>Work Day<span class="required">*</span></label><input type="text" id="wd" placeholder="Ex: WD12345"></div><div class="input-group"><label>Data<span class="required">*</span></label><input type="date" id="date" value="2025-12-23"></div><div class="input-group"><label>Endereço Novo<span class="required">*</span></label><input type="text" id="e_nov"></div><div class="input-group"><label>Observações</label><textarea id="obs"></textarea></div>`;
+      } else if(type === 'linha') {
+        titleArea.innerHTML = `<i data-lucide="map-pin" style="color:var(--color-linha)"></i> Mudança de Linha`;
+        fieldsArea.innerHTML = `<div class="input-group"><label>Work Day<span class="required">*</span></label><input type="text" id="wd" placeholder="Ex: WD12345"></div><div class="input-group"><label>Data<span class="required">*</span></label><input type="date" id="date" value="2025-12-23"></div><div class="input-group"><label>Linha Nova<span class="required">*</span></label><input type="text" id="l_nova"></div>`;
+      } else if(type === 'cartao') {
+        titleArea.innerHTML = `<i data-lucide="credit-card" style="color:var(--color-cartao)"></i> Troca de Cartão`;
+        fieldsArea.innerHTML = `<div class="input-group"><label>Work Day<span class="required">*</span></label><input type="text" id="wd" placeholder="Ex: WD12345"></div><div class="input-group"><label>Data<span class="required">*</span></label><input type="date" id="date" value="2025-12-23"></div><div class="input-group"><label>Nº Cartão Novo<span class="required">*</span></label><input type="text" id="c_novo"></div>`;
+      }
+      container.style.display = 'block';
       lucide.createIcons();
     }
+
+    function saveData() {
+      const wd = document.getElementById('wd').value;
+      const date = document.getElementById('date').value.split('-').reverse().join('/');
+      let detail = `<b>Work Day:</b> ${wd}<br>`;
+
+      if(currentType === 'reclamacao') {
+        detail += `<b>Linha:</b> ${document.getElementById('linha_rec').value}<br><b>Tipo:</b> ${document.getElementById('tipo_rec').value}<br><b>Relato:</b> ${document.getElementById('desc_rec').value}`;
+      } else if(currentType === 'endereco') {
+        detail += `<b>Endereço Novo:</b> ${document.getElementById('e_nov').value}`;
+      } else if(currentType === 'linha') {
+        detail += `<b>Linha Nova:</b> ${document.getElementById('l_nova').value}`;
+      } else if(currentType === 'cartao') {
+        detail += `<b>Cartão Novo:</b> ${document.getElementById('c_novo').value}`;
+      }
+
+      savedRecords.unshift({ id: Date.now(), type: currentType, date: date, content: detail });
+      renderRecords();
+    }
+
+    function renderRecords() {
+      const list = document.getElementById('records-list');
+      const count = document.getElementById('count');
+      const btnReport = document.getElementById('btnReport');
+      count.innerText = savedRecords.length;
+      if(savedRecords.length === 0) { list.innerHTML = 'Nenhum registro salvo ainda.'; btnReport.style.display = 'none'; return; }
+      btnReport.style.display = 'flex';
+      list.innerHTML = savedRecords.map(rec => `
+        <div class="record-card">
+          <button class="delete-btn" onclick="deleteRecord(${rec.id})"><i data-lucide="trash-2"></i></button>
+          <div class="record-header"><b>${rec.type.toUpperCase()}</b> <span class="record-date">${rec.date}</span></div>
+          <div class="record-body">${rec.content}</div>
+        </div>`).join('');
+      lucide.createIcons();
+    }
+
+    function deleteRecord(id) { savedRecords = savedRecords.filter(r => r.id !== id); renderRecords(); }
   </script>
 </body>
 </html>
