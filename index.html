@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Sistema de Atendimento - Completo</title>
+  <title>Sistema de Atendimento - Final</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -23,7 +23,7 @@
     
     .menu-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
     .menu-button { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; gap: 8px; }
-    .menu-button span { font-size: 14px; font-weight: 600; }
+    .menu-button span { font-size: 14px; font-weight: 600; color: var(--text-main); }
     
     .icon-cartao { color: var(--color-cartao); }
     .icon-linha { color: var(--color-linha); }
@@ -66,10 +66,18 @@
     <p style="color:var(--text-muted); margin:0; font-size:14px;">Transporte Fretado • Registro de Atendimentos</p>
 
     <div class="menu-list">
-      <div class="menu-button blue" onclick="showForm('cartao', this)"><i data-lucide="credit-card" class="icon-cartao"></i><span>Troca de Cartão</span></div>
-      <div class="menu-button green" onclick="showForm('linha', this)"><i data-lucide="repeat" class="icon-linha"></i><span>Mudança de Linha</span></div>
-      <div class="menu-button purple" onclick="showForm('endereco', this)"><i data-lucide="home" class="icon-endereco"></i><span>Mudança de Endereço</span></div>
-      <div class="menu-button red" onclick="showForm('reclamacao', this)"><i data-lucide="alert-circle" class="icon-reclamacao"></i><span>Reclamações</span></div>
+      <div class="menu-button blue" onclick="showForm('cartao', this)">
+        <i data-lucide="credit-card" class="icon-cartao"></i><span>Troca de Cartão</span>
+      </div>
+      <div class="menu-button green" onclick="showForm('linha', this)">
+        <i data-lucide="repeat" class="icon-linha"></i><span>Mudança de Linha</span>
+      </div>
+      <div class="menu-button purple" onclick="showForm('endereco', this)">
+        <i data-lucide="home" class="icon-endereco"></i><span>Mudança de Endereço</span>
+      </div>
+      <div class="menu-button red" onclick="showForm('reclamacao', this)">
+        <i data-lucide="alert-circle" class="icon-reclamacao"></i><span>Reclamações</span>
+      </div>
     </div>
 
     <div id="form-container" class="form-section">
@@ -96,6 +104,7 @@
       const container = document.getElementById('form-container');
       const titleArea = document.getElementById('dynamic-title');
       const fieldsArea = document.getElementById('fields-area');
+      
       document.querySelectorAll('.menu-button').forEach(btn => btn.classList.remove('active'));
       el.classList.add('active');
 
@@ -179,10 +188,14 @@
     }
 
     function saveData() {
-      const wd = document.getElementById('wd').value;
-      const date = document.getElementById('date').value.split('-').reverse().join('/');
-      if(!wd) return alert("Work Day obrigatório");
+      const wdInput = document.getElementById('wd');
+      const dateInput = document.getElementById('date');
+      
+      if(!wdInput || !wdInput.value) return alert("Work Day obrigatório");
 
+      const wd = wdInput.value;
+      const date = dateInput.value.split('-').reverse().join('/');
+      
       let info = `<strong>WD:</strong> ${wd} | `;
       let label = "";
 
@@ -195,7 +208,7 @@
       } else if(currentType === 'endereco') {
         label = "MUDANÇA DE ENDEREÇO";
         info += `<strong>Novo End:</strong> ${document.getElementById('e_nov').value}`;
-      } else {
+      } else if(currentType === 'reclamacao') {
         label = "RECLAMAÇÃO";
         info += `<strong>Tipo:</strong> ${document.getElementById('t_rec').value}`;
       }
