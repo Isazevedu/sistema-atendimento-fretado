@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Atendimento – Transporte Fretado</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; background:#f3f4f6; margin:0; padding:20px; }
+    h1 { color:#2563eb; }
+    .box { background:#fff; padding:20px; border-radius:8px; margin-bottom:20px; }
+    label { font-weight:bold; margin-top:10px; display:block; }
+    input, select, textarea { width:100%; padding:8px; margin-top:5px; }
+    button { padding:10px 15px; margin-top:15px; cursor:pointer; }
+    .reg { border:1px solid #ddd; padding:10px; margin-top:10px; border-radius:6px; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+
+<h1>🚌 Sistema de Atendimento</h1>
+<p>Transporte Fretado</p>
+
+<div class="box">
+  <label>Tipo de Atendimento *</label>
+  <select id="tipo" onchange="trocarFormulario()">
+    <option value="">Selecione...</option>
+    <option value="cartao">Troca de Cartão</option>
+    <option value="linha">Mudança de Linha</option>
+    <option value="endereco">Mudança de Endereço</option>
+    <option value="reclamacao">Reclamação</option>
+  </select>
+</div>
+
+<div class="box">
+  <label>Work Day *</label>
+  <input id="workDay">
+
+  <label>Data *</label>
+  <input id="data" type="date">
+
+  <!-- CARTÃO -->
+  <div id="cartao" class="hidden">
+    <label>Número do Cartão Novo *</label>
+    <input id="numeroCartao">
+
+    <label>RFID Novo *</label>
+    <input id="rfid">
+
+    <label>Cartão Anterior</label>
+    <input id="cartaoAnterior">
+
+    <label>RFID Anterior</label>
+    <input id="rfidAnterior">
+
+    <label>Motivo da Troca *</label>
+    <select id="motivoTroca">
+      <option value="">Selecione...</option>
+      <option>Cartão quebrado</option>
+      <option>Cartão perdido</option>
+      <option>Cartão roubado</option>
+      <option>Mau funcionamento</option>
+      <option>Outros</option>
+    </select>
+  </div>
+
+  <!-- LINHA -->
+  <div id="linha" class="hidden">
+    <label>Linha Atual *</label>
+    <input id="linhaAtual">
+
+    <label>Linha Nova *</label>
+    <input id="linhaNova">
+  </div>
+
+  <!-- ENDEREÇO -->
+  <div id="endereco" class="hidden">
+    <label>Endereço Anterior *</label>
+    <input id="enderecoAnterior">
+
+    <label>Endereço Novo *</label>
+    <input id="enderecoNovo">
+  </div>
+
+  <!-- RECLAMAÇÃO -->
+  <div id="reclamacao" class="hidden">
+    <label>Linha *</label>
+    <input id="linhaRec">
+
+    <label>Endereço (opcional)</label>
+    <input id="enderecoRec">
+
+    <label>Tipo de Reclamação *</label>
+    <select id="tipoRec">
+      <option value="">Selecione...</option>
+      <option>Comportamento do motorista</option>
+      <option>Atraso na linha</option>
+      <option>Problemas com ponto de embarque</option>
+      <option>Problemas com ponto de desembarque</option>
+      <option>Outros</option>
+    </select>
+
+    <label>Descrição *</label>
+    <textarea id="descricao"></textarea>
+  </div>
+
+  <button onclick="salvar()">Salvar Registro</button>
+</div>
+
+<div class="box">
+  <h3>📋 Registros</h3>
+  <div id="lista"></div>
+</div>
+
+<script>
+  const hoje = new Date().toISOString().split('T')[0];
+  document.getElementById('data').value = hoje;
+
+  let registros = JSON.parse(localStorage.getItem('registros')) || [];
+
+  function trocarFormulario() {
+    ['cartao','linha','endereco','reclamacao'].forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+    const tipo = document.getElementById('tipo').value;
+    if (tipo) document.getElementById(tipo).classList.remove('hidden');
+  }
+
+  function salvar() {
+    const tipo = document.getElementById('tipo').value;
+    const workDay = workDayEl.value = document.getElementById('workDay').value;
+
+    if (!tipo || !workDay) {
+      alert('Preencha os campos obrigatórios');
+      return;
+    }
+
+    const r = {
+      tipo,
+      workDay,
+      data: document.getElementById('data').value,
+      numeroCartao: numeroCartao?.value,
+      rfid: rfid?.value,
+      cartaoAnterior: cartaoAnterior?.value,
+      rfidAnterior: rfidAnterior?.value,
+      motivoTroca: motivoTroca?.value,
+      linhaAtual: linhaAtual?.value,
+      linhaNova: linhaNova?.value,
+      enderecoAnterior: enderecoAnterior?.value,
+      enderecoNovo: enderecoNovo?.value,
+      linhaRec: linhaRec?.value,
+      enderecoRec: enderecoRec?.value,
+      tipoRec: tipoRec?.value,
+      descricao: descricao?.value
+    };
+
+    registros.push(r);
+    localStorage.setItem('registros', JSON.stringify(registros));
+    render();
+    alert('Registro salvo!');
+  }
+
+  function render() {
+    const div = document.getElementById('lista');
+    div.innerHTML = '';
+    registros.forEach((r, i) => {
+      div.innerHTML += `
+        <div class="reg">
+          <strong>${i + 1} - ${r.tipo}</strong><br>
+          Work Day: ${r.workDay}<br>
+          Data: ${r.data}
+        </div>
+      `;
+    });
+  }
+
+  render();
+</script>
+
+</body>
+</html>
+
