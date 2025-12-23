@@ -38,19 +38,17 @@
     .form-section { display: none; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 24px; }
     .form-header { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; margin-bottom: 20px; }
     
+    .sub-section-title { grid-column: span 2; font-size: 14px; font-weight: 700; color: var(--primary-blue); margin: 15px 0 5px 0; padding-bottom: 5px; border-bottom: 1px dashed var(--border); display: flex; align-items: center; gap: 5px; }
+
     .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
     .full-width { grid-column: span 2; }
 
-    .input-group { margin-bottom: 15px; }
+    .input-group { margin-bottom: 10px; }
     .input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
     .required { color: var(--danger-red); margin-left: 2px; }
     
     input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: #fcfcfc; }
     textarea { min-height: 80px; resize: vertical; }
-
-    .radio-group { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-    .radio-item { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
-    .radio-item input { width: auto; }
 
     .save-btn { width: 100%; background: linear-gradient(to bottom, #3b82f6, #2563eb); color: white; border: none; padding: 16px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 20px; }
 
@@ -94,11 +92,10 @@
 
   <script>
     let currentType = '';
-    // Tenta carregar dados já existentes do navegador
     let savedRecords = JSON.parse(localStorage.getItem('atendimentos_fretado')) || [];
     
     lucide.createIcons();
-    render(); // Renderiza o que já estiver salvo ao abrir
+    render();
 
     function showForm(type, el) {
       currentType = type;
@@ -108,39 +105,53 @@
       document.querySelectorAll('.menu-button').forEach(btn => btn.classList.remove('active'));
       el.classList.add('active');
 
-      const common = `<div class="input-grid"><div class="input-group"><label>Work Day<span class="required">*</span></label><input type="text" id="wd"></div><div class="input-group"><label>Data<span class="required">*</span></label><input type="date" id="date" value="2025-12-23"></div>`;
+      const common = `<div class="input-grid">
+        <div class="input-group"><label>Work Day<span class="required">*</span></label><input type="text" id="wd" placeholder="Ex: WD123"></div>
+        <div class="input-group"><label>Data do Atendimento<span class="required">*</span></label><input type="date" id="date" value="2025-12-23"></div>`;
 
       if(type === 'cartao') {
         titleArea.innerHTML = `<i data-lucide="credit-card" class="icon-cartao"></i> Troca de Cartão`;
         fieldsArea.innerHTML = common + `
+          <div class="sub-section-title"><i data-lucide="user"></i> Dados do Colaborador</div>
           <div class="input-group"><label>Cartão Novo<span class="required">*</span></label><input type="text" id="c_novo"></div>
           <div class="input-group"><label>RFID Novo<span class="required">*</span></label><input type="text" id="rfid_n"></div>
           <div class="input-group"><label>Cartão Anterior</label><input type="text" id="c_ant"></div>
           <div class="input-group"><label>RFID Anterior</label><input type="text" id="rfid_a"></div>
           <div class="input-group full-width"><label>Motivo da troca<span class="required">*</span></label>
             <select id="motivo_c"><option value="">Selecione...</option><option>Cartão quebrado</option><option>Cartão perdido</option><option>Cartão roubado</option><option>Mau funcionamento</option></select>
-          </div></div>`;
+          </div>
+          
+          <div class="sub-section-title"><i data-lucide="users"></i> Se for Terceiro (Preencher abaixo)</div>
+          <div class="input-group"><label>Nome Completo</label><input type="text" id="t_nome"></div>
+          <div class="input-group"><label>CPF</label><input type="text" id="t_cpf" placeholder="000.000.000-00"></div>
+          <div class="input-group"><label>Empresa</label><input type="text" id="t_empresa"></div>
+          <div class="input-group"><label>Data Troca Terceiro</label><input type="date" id="t_data"></div>
+          <div class="input-group"><label>Cartão Antigo (Terc.)</label><input type="text" id="t_c_ant"></div>
+          <div class="input-group"><label>RFID Antigo (Terc.)</label><input type="text" id="t_rfid_ant"></div>
+          <div class="input-group"><label>Novo Cartão (Terc.)</label><input type="text" id="t_c_nov"></div>
+          <div class="input-group"><label>Novo RFID (Terc.)</label><input type="text" id="t_rfid_nov"></div>
+          <div class="input-group full-width"><label>Motivo da troca (Terceiro)</label>
+            <select id="t_motivo"><option value="">Selecione...</option><option>Cartão quebrado</option><option>Cartão perdido</option><option>Cartão roubado</option><option>Mau funcionamento</option></select>
+          </div>
+        </div>`;
       } else if(type === 'linha') {
         titleArea.innerHTML = `<i data-lucide="repeat" class="icon-linha"></i> Mudança de Linha`;
         fieldsArea.innerHTML = common + `
           <div class="input-group"><label>Linha Atual<span class="required">*</span></label><input type="text" id="l_atual"></div>
           <div class="input-group"><label>Linha Nova<span class="required">*</span></label><input type="text" id="l_nova"></div>
           <div class="input-group full-width"><label>Motivo<span class="required">*</span></label><select id="motivo_l"><option value="">Selecione...</option><option>Solicitado por e-mail</option><option>Mudança de endereço</option></select></div>
-          <div class="input-group full-width"><label>Endereço permanece o mesmo?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="same_end" value="Sim" checked> Sim</label><label class="radio-item"><input type="radio" name="same_end" value="Não"> Não</label></div></div>
-          <div class="input-group full-width"><label>Endereço Atual</label><input type="text" id="end_ref"></div></div>`;
+          <div class="input-group full-width"><label>Ref. Endereço</label><input type="text" id="end_ref"></div></div>`;
       } else if(type === 'home') {
         titleArea.innerHTML = `<i data-lucide="home" class="icon-endereco"></i> Mudança de Endereço`;
         fieldsArea.innerHTML = common + `
           <div class="input-group full-width"><label>Linha Atual<span class="required">*</span></label><input type="text" id="l_atual_e"></div>
           <div class="input-group full-width"><label>Endereço Anterior<span class="required">*</span></label><input type="text" id="e_ant"></div>
           <div class="input-group full-width"><label>Endereço Novo<span class="required">*</span></label><input type="text" id="e_nov"></div>
-          <div class="input-group full-width"><label>Mudou de linha?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="m_linha" value="Não" checked> Não</label><label class="radio-item"><input type="radio" name="m_linha" value="Sim"> Sim</label></div></div>
           <div class="input-group full-width"><label>Observações</label><textarea id="obs_e"></textarea></div></div>`;
       } else if(type === 'reclamacao') {
         titleArea.innerHTML = `<i data-lucide="alert-circle" class="icon-reclamacao"></i> Reclamações`;
         fieldsArea.innerHTML = common + `
           <div class="input-group full-width"><label>Linha<span class="required">*</span></label><input type="text" id="l_rec"></div>
-          <div class="input-group full-width"><label>Endereço/Ponto</label><input type="text" id="e_rec"></div>
           <div class="input-group full-width"><label>Tipo de Ocorrência<span class="required">*</span></label>
             <select id="t_rec">
                 <option value="">Selecione...</option>
@@ -158,26 +169,35 @@
     }
 
     function saveData() {
-      const wdInput = document.getElementById('wd');
-      if(!wdInput || !wdInput.value) return alert("Preencha o Work Day!");
+      const wd = document.getElementById('wd').value;
+      if(!wd) return alert("Preencha o Work Day!");
 
-      const wd = wdInput.value;
       const date = document.getElementById('date').value.split('-').reverse().join('/');
-
-      let dataObj = { id: Date.now(), type: currentType, wd, date };
+      let dataObj = { id: Date.now(), type: currentType, wd, date, details: {} };
 
       if(currentType === 'cartao') {
-        dataObj.details = { "Tipo": "TROCA DE CARTÃO", "Cartão Novo": document.getElementById('c_novo').value, "RFID Novo": document.getElementById('rfid_n').value, "Cartão Ant.": document.getElementById('c_ant').value, "RFID Ant.": document.getElementById('rfid_a').value, "Motivo": document.getElementById('motivo_c').value };
+        dataObj.details = { 
+            "Tipo": "TROCA DE CARTÃO", 
+            "C. Novo": document.getElementById('c_novo').value, 
+            "RFID N.": document.getElementById('rfid_n').value, 
+            "Motivo": document.getElementById('motivo_c').value,
+            "---TERCEIRO---": document.getElementById('t_nome').value ? "SIM" : "",
+            "T. Nome": document.getElementById('t_nome').value,
+            "T. CPF": document.getElementById('t_cpf').value,
+            "T. Empresa": document.getElementById('t_empresa').value,
+            "T. Novo Cartão": document.getElementById('t_c_nov').value,
+            "T. Motivo": document.getElementById('t_motivo').value
+        };
       } else if(currentType === 'linha') {
-        dataObj.details = { "Tipo": "MUDANÇA LINHA", "Linha Atual": document.getElementById('l_atual').value, "Linha Nova": document.getElementById('l_nova').value, "Motivo": document.getElementById('motivo_l').value, "End. Igual?": document.querySelector('input[name="same_end"]:checked').value, "Ref. Endereço": document.getElementById('end_ref').value };
+        dataObj.details = { "Tipo": "MUDANÇA LINHA", "Linha Atual": document.getElementById('l_atual').value, "Linha Nova": document.getElementById('l_nova').value, "Motivo": document.getElementById('motivo_l').value };
       } else if(currentType === 'home') {
-        dataObj.details = { "Tipo": "MUDANÇA ENDEREÇO", "Linha": document.getElementById('l_atual_e').value, "End. Anterior": document.getElementById('e_ant').value, "End. Novo": document.getElementById('e_nov').value, "Mudou Linha?": document.querySelector('input[name="m_linha"]:checked').value, "Observações": document.getElementById('obs_e').value };
+        dataObj.details = { "Tipo": "MUDANÇA ENDEREÇO", "Linha": document.getElementById('l_atual_e').value, "End. Novo": document.getElementById('e_nov').value };
       } else {
-        dataObj.details = { "Tipo": "RECLAMAÇÃO", "Linha": document.getElementById('l_rec').value, "Ponto": document.getElementById('e_rec').value, "Tipo Erro": document.getElementById('t_rec').value, "Descrição": document.getElementById('desc_rec').value };
+        dataObj.details = { "Tipo": "RECLAMAÇÃO", "Linha": document.getElementById('l_rec').value, "Tipo Erro": document.getElementById('t_rec').value, "Descrição": document.getElementById('desc_rec').value };
       }
 
       savedRecords.unshift(dataObj);
-      localStorage.setItem('atendimentos_fretado', JSON.stringify(savedRecords)); // Salva no PC
+      localStorage.setItem('atendimentos_fretado', JSON.stringify(savedRecords));
       render();
     }
 
@@ -185,11 +205,7 @@
       const list = document.getElementById('records-list');
       document.getElementById('count').innerText = savedRecords.length;
       document.getElementById('btnExport').style.display = savedRecords.length ? 'flex' : 'none';
-      
-      if(!savedRecords.length) { 
-        list.innerHTML = "Nenhum registro salvo ainda."; 
-        return; 
-      }
+      if(!savedRecords.length) { list.innerHTML = "Nenhum registro salvo ainda."; return; }
 
       list.innerHTML = savedRecords.map(r => `
         <div class="record-card">
@@ -205,9 +221,9 @@
     }
 
     function del(id) { 
-      savedRecords = savedRecords.filter(r => r.id !== id); 
-      localStorage.setItem('atendimentos_fretado', JSON.stringify(savedRecords));
-      render(); 
+        savedRecords = savedRecords.filter(r => r.id !== id); 
+        localStorage.setItem('atendimentos_fretado', JSON.stringify(savedRecords));
+        render(); 
     }
 
     function exportToExcel() {
