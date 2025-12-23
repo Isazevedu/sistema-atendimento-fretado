@@ -54,7 +54,6 @@
 
     .save-btn { width: 100%; background: linear-gradient(to bottom, #3b82f6, #2563eb); color: white; border: none; padding: 16px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 20px; }
 
-    /* ESTILO DOS REGISTROS SALVOS */
     .record-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-top: 12px; position: relative; text-align: left; background: #fff; border-left: 5px solid #cbd5e1; }
     .record-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
     .record-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; color: var(--text-main); }
@@ -74,7 +73,7 @@
     <div class="menu-list">
       <div class="menu-button blue" onclick="showForm('cartao', this)"><i data-lucide="credit-card" class="icon-cartao"></i><span>Troca de Cartão</span></div>
       <div class="menu-button green" onclick="showForm('linha', this)"><i data-lucide="repeat" class="icon-linha"></i><span>Mudança de Linha</span></div>
-      <div class="menu-button purple" onclick="showForm('endereco', this)"><i data-lucide="home" class="icon-endereco"></i><span>Mudança de Endereço</span></div>
+      <div class="menu-button purple" onclick="showForm('home', this)"><i data-lucide="home" class="icon-endereco"></i><span>Mudança de Endereço</span></div>
       <div class="menu-button red" onclick="showForm('reclamacao', this)"><i data-lucide="alert-circle" class="icon-reclamacao"></i><span>Reclamações</span></div>
     </div>
 
@@ -95,8 +94,11 @@
 
   <script>
     let currentType = '';
-    let savedRecords = [];
+    // Tenta carregar dados já existentes do navegador
+    let savedRecords = JSON.parse(localStorage.getItem('atendimentos_fretado')) || [];
+    
     lucide.createIcons();
+    render(); // Renderiza o que já estiver salvo ao abrir
 
     function showForm(type, el) {
       currentType = type;
@@ -126,7 +128,7 @@
           <div class="input-group full-width"><label>Motivo<span class="required">*</span></label><select id="motivo_l"><option value="">Selecione...</option><option>Solicitado por e-mail</option><option>Mudança de endereço</option></select></div>
           <div class="input-group full-width"><label>Endereço permanece o mesmo?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="same_end" value="Sim" checked> Sim</label><label class="radio-item"><input type="radio" name="same_end" value="Não"> Não</label></div></div>
           <div class="input-group full-width"><label>Endereço Atual</label><input type="text" id="end_ref"></div></div>`;
-      } else if(type === 'endereco') {
+      } else if(type === 'home') {
         titleArea.innerHTML = `<i data-lucide="home" class="icon-endereco"></i> Mudança de Endereço`;
         fieldsArea.innerHTML = common + `
           <div class="input-group full-width"><label>Linha Atual<span class="required">*</span></label><input type="text" id="l_atual_e"></div>
@@ -139,7 +141,16 @@
         fieldsArea.innerHTML = common + `
           <div class="input-group full-width"><label>Linha<span class="required">*</span></label><input type="text" id="l_rec"></div>
           <div class="input-group full-width"><label>Endereço/Ponto</label><input type="text" id="e_rec"></div>
-          <div class="input-group full-width"><label>Tipo<span class="required">*</span></label><select id="t_rec"><option value="">Selecione...</option><option>Atraso</option><option>Conduta</option><option>Veículo</option></select></div>
+          <div class="input-group full-width"><label>Tipo de Ocorrência<span class="required">*</span></label>
+            <select id="t_rec">
+                <option value="">Selecione...</option>
+                <option>Atraso da linha</option>
+                <option>Comportamento do motorista</option>
+                <option>Solicitação de novo ponto</option>
+                <option>Problemas com o ponto de embarque e desembarque</option>
+                <option>Outros...</option>
+            </select>
+          </div>
           <div class="input-group full-width"><label>Descrição Detalhada<span class="required">*</span></label><textarea id="desc_rec"></textarea></div></div>`;
       }
       container.style.display = 'block';
@@ -147,9 +158,11 @@
     }
 
     function saveData() {
-      const wd = document.getElementById('wd').value;
+      const wdInput = document.getElementById('wd');
+      if(!wdInput || !wdInput.value) return alert("Preencha o Work Day!");
+
+      const wd = wdInput.value;
       const date = document.getElementById('date').value.split('-').reverse().join('/');
-      if(!wd) return alert("Preencha o Work Day!");
 
       let dataObj = { id: Date.now(), type: currentType, wd, date };
 
@@ -157,13 +170,14 @@
         dataObj.details = { "Tipo": "TROCA DE CARTÃO", "Cartão Novo": document.getElementById('c_novo').value, "RFID Novo": document.getElementById('rfid_n').value, "Cartão Ant.": document.getElementById('c_ant').value, "RFID Ant.": document.getElementById('rfid_a').value, "Motivo": document.getElementById('motivo_c').value };
       } else if(currentType === 'linha') {
         dataObj.details = { "Tipo": "MUDANÇA LINHA", "Linha Atual": document.getElementById('l_atual').value, "Linha Nova": document.getElementById('l_nova').value, "Motivo": document.getElementById('motivo_l').value, "End. Igual?": document.querySelector('input[name="same_end"]:checked').value, "Ref. Endereço": document.getElementById('end_ref').value };
-      } else if(currentType === 'endereco') {
+      } else if(currentType === 'home') {
         dataObj.details = { "Tipo": "MUDANÇA ENDEREÇO", "Linha": document.getElementById('l_atual_e').value, "End. Anterior": document.getElementById('e_ant').value, "End. Novo": document.getElementById('e_nov').value, "Mudou Linha?": document.querySelector('input[name="m_linha"]:checked').value, "Observações": document.getElementById('obs_e').value };
       } else {
         dataObj.details = { "Tipo": "RECLAMAÇÃO", "Linha": document.getElementById('l_rec').value, "Ponto": document.getElementById('e_rec').value, "Tipo Erro": document.getElementById('t_rec').value, "Descrição": document.getElementById('desc_rec').value };
       }
 
       savedRecords.unshift(dataObj);
+      localStorage.setItem('atendimentos_fretado', JSON.stringify(savedRecords)); // Salva no PC
       render();
     }
 
@@ -171,7 +185,11 @@
       const list = document.getElementById('records-list');
       document.getElementById('count').innerText = savedRecords.length;
       document.getElementById('btnExport').style.display = savedRecords.length ? 'flex' : 'none';
-      if(!savedRecords.length) { list.innerHTML = "Nenhum registro salvo ainda."; return; }
+      
+      if(!savedRecords.length) { 
+        list.innerHTML = "Nenhum registro salvo ainda."; 
+        return; 
+      }
 
       list.innerHTML = savedRecords.map(r => `
         <div class="record-card">
@@ -186,7 +204,11 @@
       lucide.createIcons();
     }
 
-    function del(id) { savedRecords = savedRecords.filter(r => r.id !== id); render(); }
+    function del(id) { 
+      savedRecords = savedRecords.filter(r => r.id !== id); 
+      localStorage.setItem('atendimentos_fretado', JSON.stringify(savedRecords));
+      render(); 
+    }
 
     function exportToExcel() {
       let csv = "Tipo,WD,Data,Detalhes\n";
