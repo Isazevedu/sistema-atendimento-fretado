@@ -1,181 +1,205 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Sistema de Atendimento – Transporte Fretado</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Sistema de Atendimento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
-    body { font-family: Arial, sans-serif; background:#f3f4f6; margin:0; padding:20px; }
-    h1 { color:#2563eb; }
-    .box { background:#fff; padding:20px; border-radius:8px; margin-bottom:20px; }
-    label { font-weight:bold; margin-top:10px; display:block; }
-    input, select, textarea { width:100%; padding:8px; margin-top:5px; }
-    button { padding:10px 15px; margin-top:15px; cursor:pointer; }
-    .reg { border:1px solid #ddd; padding:10px; margin-top:10px; border-radius:6px; }
-    .hidden { display:none; }
-  </style>
-</head>
-<body>
-
-<h1>🚌 Sistema de Atendimento</h1>
-<p>Transporte Fretado</p>
-
-<div class="box">
-  <label>Tipo de Atendimento *</label>
-  <select id="tipo" onchange="trocarFormulario()">
-    <option value="">Selecione...</option>
-    <option value="cartao">Troca de Cartão</option>
-    <option value="linha">Mudança de Linha</option>
-    <option value="endereco">Mudança de Endereço</option>
-    <option value="reclamacao">Reclamação</option>
-  </select>
-</div>
-
-<div class="box">
-  <label>Work Day *</label>
-  <input id="workDay">
-
-  <label>Data *</label>
-  <input id="data" type="date">
-
-  <!-- CARTÃO -->
-  <div id="cartao" class="hidden">
-    <label>Número do Cartão Novo *</label>
-    <input id="numeroCartao">
-
-    <label>RFID Novo *</label>
-    <input id="rfid">
-
-    <label>Cartão Anterior</label>
-    <input id="cartaoAnterior">
-
-    <label>RFID Anterior</label>
-    <input id="rfidAnterior">
-
-    <label>Motivo da Troca *</label>
-    <select id="motivoTroca">
-      <option value="">Selecione...</option>
-      <option>Cartão quebrado</option>
-      <option>Cartão perdido</option>
-      <option>Cartão roubado</option>
-      <option>Mau funcionamento</option>
-      <option>Outros</option>
-    </select>
-  </div>
-
-  <!-- LINHA -->
-  <div id="linha" class="hidden">
-    <label>Linha Atual *</label>
-    <input id="linhaAtual">
-
-    <label>Linha Nova *</label>
-    <input id="linhaNova">
-  </div>
-
-  <!-- ENDEREÇO -->
-  <div id="endereco" class="hidden">
-    <label>Endereço Anterior *</label>
-    <input id="enderecoAnterior">
-
-    <label>Endereço Novo *</label>
-    <input id="enderecoNovo">
-  </div>
-
-  <!-- RECLAMAÇÃO -->
-  <div id="reclamacao" class="hidden">
-    <label>Linha *</label>
-    <input id="linhaRec">
-
-    <label>Endereço (opcional)</label>
-    <input id="enderecoRec">
-
-    <label>Tipo de Reclamação *</label>
-    <select id="tipoRec">
-      <option value="">Selecione...</option>
-      <option>Comportamento do motorista</option>
-      <option>Atraso na linha</option>
-      <option>Problemas com ponto de embarque</option>
-      <option>Problemas com ponto de desembarque</option>
-      <option>Outros</option>
-    </select>
-
-    <label>Descrição *</label>
-    <textarea id="descricao"></textarea>
-  </div>
-
-  <button onclick="salvar()">Salvar Registro</button>
-</div>
-
-<div class="box">
-  <h3>📋 Registros</h3>
-  <div id="lista"></div>
-</div>
-
-<script>
-  const hoje = new Date().toISOString().split('T')[0];
-  document.getElementById('data').value = hoje;
-
-  let registros = JSON.parse(localStorage.getItem('registros')) || [];
-
-  function trocarFormulario() {
-    ['cartao','linha','endereco','reclamacao'].forEach(id => {
-      document.getElementById(id).classList.add('hidden');
-    });
-    const tipo = document.getElementById('tipo').value;
-    if (tipo) document.getElementById(tipo).classList.remove('hidden');
-  }
-
-  function salvar() {
-    const tipo = document.getElementById('tipo').value;
-    const workDay = workDayEl.value = document.getElementById('workDay').value;
-
-    if (!tipo || !workDay) {
-      alert('Preencha os campos obrigatórios');
-      return;
+    :root {
+      --bg: #f7f7f8;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --purple: #7c3aed;
+      --red: #dc2626;
     }
 
-    const r = {
-      tipo,
-      workDay,
-      data: document.getElementById('data').value,
-      numeroCartao: numeroCartao?.value,
-      rfid: rfid?.value,
-      cartaoAnterior: cartaoAnterior?.value,
-      rfidAnterior: rfidAnterior?.value,
-      motivoTroca: motivoTroca?.value,
-      linhaAtual: linhaAtual?.value,
-      linhaNova: linhaNova?.value,
-      enderecoAnterior: enderecoAnterior?.value,
-      enderecoNovo: enderecoNovo?.value,
-      linhaRec: linhaRec?.value,
-      enderecoRec: enderecoRec?.value,
-      tipoRec: tipoRec?.value,
-      descricao: descricao?.value
-    };
+    * { box-sizing: border-box; }
 
-    registros.push(r);
-    localStorage.setItem('registros', JSON.stringify(registros));
-    render();
-    alert('Registro salvo!');
-  }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 32px 16px;
+    }
 
-  function render() {
-    const div = document.getElementById('lista');
-    div.innerHTML = '';
-    registros.forEach((r, i) => {
-      div.innerHTML += `
-        <div class="reg">
-          <strong>${i + 1} - ${r.tipo}</strong><br>
-          Work Day: ${r.workDay}<br>
-          Data: ${r.data}
-        </div>
-      `;
-    });
-  }
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
 
-  render();
-</script>
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+      margin-bottom: 24px;
+    }
 
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    /* ===== BOTÕES DE TIPO ===== */
+    .types {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .type-btn {
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all .2s;
+    }
+
+    .type-btn.active {
+      border-width: 2px;
+    }
+
+    .blue.active { border-color: var(--blue); background: #eff6ff; }
+    .green.active { border-color: var(--green); background: #ecfdf5; }
+    .purple.active { border-color: var(--purple); background: #f5f3ff; }
+    .red.active { border-color: var(--red); background: #fef2f2; }
+
+    /* ===== FORM ===== */
+    form {
+      display: grid;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: var(--blue);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: .9;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="card">
+      <h1>Sistema de Atendimento</h1>
+      <div class="subtitle">Transporte Fretado • Registro de Atendimentos</div>
+
+      <div class="types">
+        <div class="type-btn blue active" onclick="showForm('cartao', this)">Troca de Cartão</div>
+        <div class="type-btn green" onclick="showForm('linha', this)">Mudança de Linha</div>
+        <div class="type-btn purple" onclick="showForm('endereco', this)">Mudança de Endereço</div>
+        <div class="type-btn red" onclick="showForm('reclamacao', this)">Reclamações</div>
+      </div>
+    </div>
+
+    <!-- FORM TROCA CARTÃO -->
+    <div class="card form cartao">
+      <h2>Troca de Cartão</h2>
+      <form>
+        <input placeholder="Work Day" />
+        <input type="date" />
+        <input placeholder="Número do Cartão Novo" />
+        <input placeholder="RFID Novo" />
+        <input placeholder="Cartão Anterior" />
+        <input placeholder="RFID Anterior" />
+        <select>
+          <option>Motivo da troca</option>
+        </select>
+        <button>Salvar Registro</button>
+      </form>
+    </div>
+
+    <!-- FORM MUDANÇA LINHA -->
+    <div class="card form linha hidden">
+      <h2>Mudança de Linha</h2>
+      <form>
+        <input placeholder="Work Day" />
+        <input type="date" />
+        <input placeholder="Linha Atual" />
+        <input placeholder="Linha Nova" />
+        <select>
+          <option>Motivo da mudança</option>
+        </select>
+        <button>Salvar Registro</button>
+      </form>
+    </div>
+
+    <!-- FORM ENDEREÇO -->
+    <div class="card form endereco hidden">
+      <h2>Mudança de Endereço</h2>
+      <form>
+        <input placeholder="Work Day" />
+        <input type="date" />
+        <input placeholder="Endereço Anterior" />
+        <input placeholder="Endereço Novo" />
+        <textarea placeholder="Observações"></textarea>
+        <button>Salvar Registro</button>
+      </form>
+    </div>
+
+    <!-- FORM RECLAMAÇÃO -->
+    <div class="card form reclamacao hidden">
+      <h2>Reclamações</h2>
+      <form>
+        <textarea placeholder="Descreva a reclamação"></textarea>
+        <button>Salvar Registro</button>
+      </form>
+    </div>
+
+  </div>
+
+  <script>
+    function showForm(type, el) {
+      document.querySelectorAll('.form').forEach(f => f.classList.add('hidden'));
+      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.' + type).classList.remove('hidden');
+      el.classList.add('active');
+    }
+  </script>
 </body>
 </html>
+
 
